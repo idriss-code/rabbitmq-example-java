@@ -1,14 +1,17 @@
 package org.rabbit.stream;
 
-import com.rabbitmq.stream.ByteCapacity;
-import com.rabbitmq.stream.Consumer;
-import com.rabbitmq.stream.Environment;
-import com.rabbitmq.stream.OffsetSpecification;
+import com.rabbitmq.stream.*;
 
 public class Receiver {
 
     public static void main(String[] args) {
-        Environment environment = Environment.builder().build();
+        Address entryPoint = new Address("rabbitmq", 5552);
+        Environment environment = Environment.builder()
+                .host(entryPoint.host())
+                .port(entryPoint.port())
+                .addressResolver(address -> entryPoint)
+                .build();
+
         String stream = "hello-java-stream";
         environment.streamCreator().stream(stream).maxLengthBytes(ByteCapacity.GB(5)).create();
 
